@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>台北夜市導覽</title>
+<style>
+:root{--bg:#14101a;--card:#1f1830;--ink:#f3ecff;--muted:#a99cc4;--brand:#ff5e8a;--brand2:#ffb84d;--gold:#ffd76a;--line:rgba(255,255,255,.08)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:"PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:560px;margin:0 auto;padding-bottom:36px}
+.head{background:linear-gradient(135deg,#ff5e8a,#ff9248,#ffb84d);color:#fff;padding:24px 20px 20px;border-radius:0 0 24px 24px}
+.head h1{font-size:25px;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+.head p{font-size:13px;opacity:.95;margin-top:5px}
+.list{padding:14px 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-bottom:14px;overflow:hidden;cursor:pointer;transition:.2s}
+.card:active{transform:scale(.99)}
+.chead{display:flex;align-items:center;gap:12px;padding:16px}
+.badge{flex:0 0 auto;width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:flex;align-items:center;justify-content:center;font-size:28px}
+.ctitle{flex:1;min-width:0}
+.ctitle .n{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ctitle .loc{font-size:12px;color:var(--muted);margin-top:3px}
+.ctitle .star{font-size:12px;color:var(--gold);margin-top:4px}
+.chev{color:var(--muted);font-size:20px;transition:.3s}
+.card.open .chev{transform:rotate(90deg)}
+.card.jensen{border:2px solid var(--gold);background:linear-gradient(160deg,rgba(255,215,106,.14),var(--card))}
+.card.jensen .badge{background:linear-gradient(135deg,#ffd76a,#76b900)}
+.card.jensen .n::after{content:"NVIDIA";font-size:10px;background:#76b900;color:#fff;padding:2px 7px;border-radius:8px;letter-spacing:1px}
+.body{display:none;padding:0 16px 16px;animation:fade .35s}
+.card.open .body{display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.feat{font-size:14px;color:var(--ink);line-height:1.7;background:rgba(255,184,77,.1);border-left:3px solid var(--brand2);padding:10px 12px;border-radius:0 10px 10px 0;margin-bottom:12px}
+.sec{font-size:13px;color:var(--gold);letter-spacing:2px;margin:12px 0 8px;font-weight:600}
+.stalls{display:flex;flex-direction:column;gap:8px}
+.stall{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border-radius:12px;padding:9px 11px}
+.stall .se{font-size:20px}
+.stall .si{flex:1;min-width:0}
+.stall .sn{font-size:14px;font-weight:600}
+.stall .sd{font-size:12px;color:var(--muted);margin-top:1px}
+.mapwrap{margin-top:12px;border-radius:14px;overflow:hidden;height:200px;background:#000}
+.mapwrap iframe{width:100%;height:100%;border:0;display:block}
+.nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;text-decoration:none;font-size:15px;font-weight:600}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>🏮 台北夜市導覽</h1>
+    <p>各大夜市特色 · 必吃美食 · 知名攤位 · 地圖導航</p>
+  </div>
+  <div class="list" id="list"></div>
+  <div class="foot">攤位與美食資訊僅供參考 · 地圖由 Google Maps 提供</div>
+</div>
+<script>
+const markets=[
+{n:"黃仁勳同款・老黃吃過的",e:"🤵",star:5.0,loc:"NVIDIA 黃仁勳來台被拍到・媒體報導美食",jensen:true,
+ feat:"輝達創辦人黃仁勳每次來台（Computex 期間）都掀起美食朝聖潮。以下為媒體報導他造訪、品嚐或公開稱讚過的店家，跟著老黃吃就對了！",
+ stalls:[["寧夏夜市","🌙","老黃曾率員工夜遊寧夏夜市掃街小吃"],["夜市滷肉飯","🍚","公開表示最愛台灣滷肉飯"],["美麗華水餃館","🥟","被拍到與員工聚餐吃水餃熱炒"],["鼎泰豐 小籠包","🥟","多次招待國際貴賓、自己也愛吃"],["阜杭豆漿","🥖","來台被民眾捕獲排隊買早餐"],["路邊鹽酥雞","🍗","逛夜市被拍到外帶鹹酥雞"]]},
+{n:"士林夜市",e:"🎡",star:4.4,loc:"台北市士林區基河路101號(劍潭站1號出口)",
+ feat:"台北規模最大、最知名的夜市，觀光客必訪。地下美食街＋周邊商圈，從小吃到服飾無所不有。",
+ stalls:[["豪大大雞排","🍗","比臉大的炸雞排始祖"],["士林大香腸","🌭","現烤蒜味大香腸"],["鐘樓below雞蛋仔","🥚","港式雞蛋仔"],["家鄉涼麵","🥗","麻醬涼麵配味噌湯"],["忠誠號蚵仔煎","🦪","老字號蚵仔煎"],["大餅包小餅","🫓","現打花生芝麻"]]},
+{n:"饒河街觀光夜市",e:"🏮",star:4.3,loc:"台北市松山區饒河街(松山慈祐宮旁)",
+ feat:"600公尺一條街、雙牌樓對望，氣氛濃厚。緊鄰松山慈祐宮與彩虹橋，逛街拜拜兩相宜。",
+ stalls:[["福州世祖胡椒餅","🥟","炭爐現烤、米其林推薦"],["陳董藥燉排骨","🍲","暖身藥燉湯"],["東發號油飯","🍚","百年油飯麵線"],["施老闆麻辣臭豆腐","🧆","重口味麻辣鴨血"],["紅燒牛肉麵","🍜","平價牛肉麵"]]},
+{n:"寧夏夜市",e:"🌙",star:4.3,loc:"台北市大同區寧夏路(近雙連站)",
+ feat:"在地人最愛的『古早味』夜市，以傳統小吃聞名，攤位密集、走道乾淨，被譽為最有人情味夜市。",
+ stalls:[["劉芋仔蛋黃芋餅","🥔","米其林必比登芋餅"],["豬肝榮仔","🍲","現燙豬肝湯"],["方家雞肉飯","🍚","油亮雞肉飯"],["圓環邊蚵仔煎","🦪","老字號蚵仔煎"],["鴨頭正二代","🦆","滷味鴨頭"],["古早味現烤蛋糕","🍰","澎湖現烤蛋糕"]]},
+{n:"臨江街(通化)夜市",e:"🌃",star:4.2,loc:"台北市大安區通化街(信義安和站)",
+ feat:"信義區旁的在地夜市，上班族下班覓食首選。小吃道地、價格實惠，沒有過多觀光味。",
+ stalls:[["駱記小炒","🍳","現炒小卷米粉"],["梁記滷味","🍢","入味冷滷味"],["御品元冰火湯圓","🍡","爆漿芝麻湯圓"],["上海生煎包","🥟","現煎生煎包"],["阿宗蚵仔麵線","🍜","蚵仔大腸麵線"]]},
+{n:"南機場夜市",e:"🍜",star:4.5,loc:"台北市中正區中華路二段307巷",
+ feat:"美食家公認CP值最高的銅板夜市，臥虎藏龍、米其林推薦攤位密度極高，在地老饕最愛。",
+ stalls:[["山內雞肉","🍗","嫩滑雞肉飯、米其林"],["臭老闆現蒸臭豆腐","🧆","蒸臭豆腐、必比登"],["無名推車燒餅","🫓","現烤蔥燒餅排隊王"],["松青潤餅","🌯","古早味潤餅捲"],["好吃炸雞","🍗","現炸鹹酥雞"],["阿男麻油雞","🍲","暖胃麻油雞"]]},
+{n:"華西街觀光夜市",e:"🐉",star:4.0,loc:"台北市萬華區華西街(龍山寺旁)",
+ feat:"台灣第一座觀光夜市，紅燈籠拱廊復古味十足，緊鄰龍山寺，以海鮮、藥膳、傳統小吃著稱。",
+ stalls:[["小王煮瓜(清湯瓜仔肉)","🍲","米其林滷肉飯"],["源芳刈包","🥪","爌肉刈包"],["昶鴻麵點","🍜","菊花肉麵、必比登"],["兩喜號","🦪","百年魷魚羹"],["阿猜嬤甜湯","🍮","古早味甜湯"]]},
+{n:"公館夜市",e:"🎓",star:4.1,loc:"台北市中正區羅斯福路四段(公館站)",
+ feat:"台大、台科大旁的學生夜市，平價美食與異國料理林立，巷弄藏著許多排隊名店。",
+ stalls:[["藍家割包","🥪","招牌綜合割包"],["陳三鼎黑糖粉圓鮮奶","🧋","黑糖珍奶創始"],["雄記蔥油餅","🫓","酥脆蔥油餅"],["台一牛奶大王","🍧","古早味八寶冰"],["柳家涼麵","🥗","深夜涼麵"]]},
+{n:"雙城街夜市",e:"✨",star:4.0,loc:"台北市中山區雙城街(中山國小站)",
+ feat:"晴光商圈內的小而精緻夜市，鄰近林森商圈，深夜營業、宵夜選擇多。",
+ stalls:[["雙城街老牌張肉羹","🍲","清甜肉羹"],["紅花麻辣鴨血臭豆腐","🧆","麻辣鴨血"],["小李子鹹水雞","🍗","涼拌鹹水雞"],["王記菜館","🍚","家常熱炒"]]},
+{n:"延三夜市",e:"🌟",star:4.2,loc:"台北市大同區延平北路三段",
+ feat:"大稻埕旁的在地老夜市，米其林必比登常客聚集，古早味濃厚、觀光客少。",
+ stalls:[["大稻埕慈聖宮小吃","🍲","廟口排骨湯"],["阿桐阿寶四神湯","🥣","四神湯豬腳麵線"],["大橋頭老牌筒仔米糕","🍚","必比登米糕"],["施家鮮肉湯圓","🍡","鮮肉湯圓"]]},
+{n:"景美夜市",e:"🌠",star:4.1,loc:"台北市文山區景美街(景美站)",
+ feat:"文山區人氣夜市，廟口型態，傳統小吃與排隊甜點齊聚，在地學生與居民愛逛。",
+ stalls:[["上海生煎包","🥟","爆汁生煎"],["景美豆花","🍮","古早味豆花"],["世界豆漿大王","🥖","蛋餅燒餅"],["阿香现烤蛋塔","🥧","現烤蛋塔"]]}
+];
+const mapSrc=q=>"https://www.google.com/maps?q="+encodeURIComponent(q)+"&z=17&output=embed";
+const navUrl=q=>"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(q);
+const star=s=>"★".repeat(Math.round(s))+"☆".repeat(5-Math.round(s))+"  "+s;
+document.getElementById('list').innerHTML=markets.map((m,i)=>`
+ <div class="card${m.jensen?' jensen':''}" id="c${i}">
+   <div class="chead" onclick="toggle(${i})">
+     <div class="badge">${m.e}</div>
+     <div class="ctitle"><div class="n">${m.n}</div>
+       <div class="loc">📍 ${m.loc}</div>
+       <div class="star">${star(m.star)}</div></div>
+     <div class="chev">›</div>
+   </div>
+   <div class="body">
+     <div class="feat">${m.feat}</div>
+     <div class="sec">🔥 必吃知名攤位</div>
+     <div class="stalls">${m.stalls.map(s=>`<div class="stall"><span class="se">${s[1]}</span><div class="si"><div class="sn">${s[0]}</div><div class="sd">${s[2]}</div></div></div>`).join('')}</div>
+     <div class="mapwrap" id="map${i}"></div>
+     <a class="nav" href="${navUrl(m.n+' '+m.loc)}" target="_blank">➤ Google 地圖導航</a>
+   </div>
+ </div>`).join('');
+function toggle(i){const c=document.getElementById('c'+i);const was=c.classList.contains('open');
+ document.querySelectorAll('.card').forEach(x=>x.classList.remove('open'));
+ if(!was){c.classList.add('open');
+   const mw=document.getElementById('map'+i);
+   if(!mw.querySelector('iframe')){const f=document.createElement('iframe');f.loading="lazy";f.src=mapSrc(markets[i].n+" "+markets[i].loc);mw.appendChild(f);}
+   setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'start'}),120);}
+}
+</script>
+</body>
+</html>
