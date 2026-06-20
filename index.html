@@ -45,6 +45,8 @@ body{font-family:"PingFang TC","Microsoft JhengHei",sans-serif;background:var(--
 .smap{margin-top:8px;height:150px;border-radius:10px;overflow:hidden;background:#000}
 .smap iframe{width:100%;height:100%;border:0;display:block}
 .snav{display:block;text-align:center;margin-top:8px;padding:9px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;text-decoration:none;font-size:13px;font-weight:600}
+.sback{width:100%;margin-bottom:8px;padding:9px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.06);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer}
+.sback:active{transform:scale(.98)}
 .nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;text-decoration:none;font-size:15px;font-weight:600}
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:10px;line-height:1.6}
 </style>
@@ -118,7 +120,7 @@ document.getElementById('list').innerHTML=markets.map((m,i)=>`
            <div class="si"><div class="sn">${s[0]}</div><div class="sd">${s[2]}</div></div>
            <span class="scam">📷</span>
          </div>
-         <div class="sdetail" data-q="${m.n} ${s[0]} ${m.loc}"></div>
+         <div class="sdetail" data-q="${m.jensen?(s[0]+' 台北 夜市美食'):(s[0]+' '+m.loc.replace(/\([^)]*\)/g,'').trim())}"></div>
        </div>`;}).join('')}</div>
      <a class="nav" href="${navUrl(m.n+' '+m.loc)}" target="_blank">➤ 整個夜市・地圖導航</a>
    </div>
@@ -132,7 +134,8 @@ function stoggle(id,q,mi){const el=document.getElementById('s'+id);const was=el.
  if(was){el.classList.remove('open');return;}
  const dt=el.querySelector('.sdetail');const fullq=dt.getAttribute('data-q');
  if(!el.dataset.loaded){
-   dt.innerHTML=`<img class="bigphoto" loading="lazy" src="${photo(id+501)}" alt="">
+   dt.innerHTML=`<button class="sback" onclick="event.stopPropagation();stoggle(${id})">← 返回攤位列表</button>
+     <img class="bigphoto" loading="lazy" src="${photo(id+501)}" alt="">
      <div class="smap"><iframe loading="lazy" src="${mapSrc(fullq)}"></iframe></div>
      <a class="snav" href="${navUrl(fullq)}" target="_blank">➤ 導航到這攤（大概位置）</a>`;
    el.dataset.loaded="1";}
